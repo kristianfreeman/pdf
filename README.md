@@ -16,7 +16,7 @@ $ echo "YOUR_SECRET" | npx wrangler secret put SECRET_KEY
 
 ```bash
 $ curl -X POST \
-  -H "Authorization: Bearer kT/e6NRb2GZy1fjKqdFdRELbBjWYaXxbPG3P7Fsqs8A=" \
+  -H "Authorization: Bearer SECRET_KEY" \
   -H "Content-Type: application/json" \
   -d '{"document": "<html><body><h1>Hello, world!</h1></body></html>"}' \
   https://pdf.signalnerve.workers.dev # sub in your custom deployment
