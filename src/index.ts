@@ -1,18 +1,30 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import puppeteer from "@cloudflare/puppeteer";
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
+	async fetch(request: Request, env: Env) {
+		try {
+			const auth = request.headers.get("Authorization");
+			if (!auth || auth !== `Bearer ${env.SECRET_KEY}`) {
+				return new Response("Unauthorized", { status: 401 });
+			}
+
+			const browser = await puppeteer.launch(env.BROWSER);
+			const json = await request.json() as { document: string };
+			const { document } = json;
+
+			const page = await browser.newPage();
+			await page.setContent(document);
+			const pdf = await page.pdf({ printBackground: true });
+
+			await browser.close();
+
+			return new Response(pdf, {
+				headers: {
+					"content-type": "application/pdf",
+				},
+			});
+		} catch (error: any) {
+			return new Response(error.message, { status: 500 });
+		}
 	},
-} satisfies ExportedHandler<Env>;
+};

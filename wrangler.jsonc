@@ -7,9 +7,13 @@
 	"name": "pdf",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-06-19",
+	"compatibility_flags": ["nodejs_compat"],
 	"observability": {
 		"enabled": true
-	}
+	},
+	"browser": {
+    		"binding": "BROWSER",
+	},
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
